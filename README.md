@@ -37,6 +37,12 @@ Sub GenerateDataTable()
     ' Set the initial destination row
     destinationRow = 2
     
+    ' Check if Us lead and India lead columns have any values
+    If Application.WorksheetFunction.CountA(usLeadColumn.Offset(1)) = 0 Or Application.WorksheetFunction.CountA(indiaLeadColumn.Offset(1)) = 0 Then
+        MsgBox "No data found in Us lead or India lead column!", vbExclamation
+        Exit Sub
+    End If
+    
     ' Loop through each unique combination of Us lead and India lead
     On Error Resume Next
     For Each usLeadCell In usLeadColumn.Offset(1).SpecialCells(xlCellTypeConstants)
@@ -62,4 +68,3 @@ Sub GenerateDataTable()
     
     MsgBox "Data table generated successfully!", vbInformation
 End Sub
-            
