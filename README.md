@@ -1,6 +1,7 @@
 # prac-ml
 Practise my ML fundamentals
 
+
 Sub GenerateDataTable()
     Dim sourceSheet As Worksheet
     Dim destinationSheet As Worksheet
@@ -8,8 +9,6 @@ Sub GenerateDataTable()
     Dim usLeadColumn As Range
     Dim indiaLeadColumn As Range
     Dim destinationRow As Long
-    Dim usLeadArea As Range
-    Dim indiaLeadArea As Range
     Dim usLeadCell As Range
     Dim indiaLeadCell As Range
     Dim usLead As String
@@ -20,14 +19,14 @@ Sub GenerateDataTable()
     Set sourceData = sourceSheet.UsedRange
     
     ' Set the destination sheet
-    Set destinationSheet = ThisWorkbook.Sheets("Sheet2")
+    Set destinationSheet = ThisWorkbook.Sheets("Sheet4")
     
     ' Clear previous data in destination sheet
     destinationSheet.Cells.Clear
     
-    ' Find the columns with headings "hr" and "us lead"
-    Set usLeadColumn = sourceData.Rows(1).Find("us lead", LookIn:=xlValues, LookAt:=xlWhole)
-    Set indiaLeadColumn = sourceData.Rows(1).Find("hr", LookIn:=xlValues, LookAt:=xlWhole)
+    ' Find the columns with headings "HR_LEVEL_12" and "US Lead"
+    Set usLeadColumn = sourceData.Rows(1).Find("US Lead", LookIn:=xlValues, LookAt:=xlWhole)
+    Set indiaLeadColumn = sourceData.Rows(1).Find("HR_LEVEL_12", LookIn:=xlValues, LookAt:=xlWhole)
     
     ' Exit if either column is not found
     If usLeadColumn Is Nothing Or indiaLeadColumn Is Nothing Then
@@ -39,11 +38,10 @@ Sub GenerateDataTable()
     destinationRow = 2
     
     ' Loop through each unique combination of Us lead and India lead
-    Set usLeadArea = sourceData.Columns(usLeadColumn.Column).SpecialCells(xlCellTypeConstants).Areas
-    Set indiaLeadArea = sourceData.Columns(indiaLeadColumn.Column).SpecialCells(xlCellTypeConstants).Areas
-    
-    For Each usLeadCell In usLeadArea.Cells
-        For Each indiaLeadCell In indiaLeadArea.Cells
+    On Error Resume Next
+    For Each usLeadCell In usLeadColumn.Offset(1).SpecialCells(xlCellTypeConstants)
+        On Error Resume Next
+        For Each indiaLeadCell In indiaLeadColumn.Offset(1).SpecialCells(xlCellTypeConstants)
             usLead = usLeadCell.Value
             indiaLead = indiaLeadCell.Value
             
@@ -59,7 +57,9 @@ Sub GenerateDataTable()
             ' Increment the destination row
             destinationRow = destinationRow + 1
         Next indiaLeadCell
+        On Error Resume Next
     Next usLeadCell
     
     MsgBox "Data table generated successfully!", vbInformation
 End Sub
+            
