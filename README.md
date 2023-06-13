@@ -1,7 +1,6 @@
 # prac-ml
 Practise my ML fundamentals
 
-
 Sub GenerateDataTable()
     Dim sourceSheet As Worksheet
     Dim destinationSheet As Worksheet
@@ -9,10 +8,12 @@ Sub GenerateDataTable()
     Dim usLeadColumn As Range
     Dim indiaLeadColumn As Range
     Dim destinationRow As Long
-    Dim usLeadCell As Range
-    Dim indiaLeadCell As Range
+    Dim usLeadValues As Variant
+    Dim indiaLeadValues As Variant
     Dim usLead As String
     Dim indiaLead As String
+    Dim i As Long
+    Dim j As Long
     
     ' Set the source sheet and range
     Set sourceSheet = ThisWorkbook.Sheets("Sheet1")
@@ -37,34 +38,35 @@ Sub GenerateDataTable()
     ' Set the initial destination row
     destinationRow = 2
     
-    ' Check if Us lead and India lead columns have any values
-    If Application.WorksheetFunction.CountA(usLeadColumn.Offset(1)) = 0 Or Application.WorksheetFunction.CountA(indiaLeadColumn.Offset(1)) = 0 Then
-        MsgBox "No data found in Us lead or India lead column!", vbExclamation
-        Exit Sub
-    End If
+    ' Get the values from Us lead and India lead columns into arrays
+    usLeadValues = usLeadColumn.Offset(1).Resize(sourceData.Rows.Count - 1).Value
+    indiaLeadValues = indiaLeadColumn.Offset(1).Resize(sourceData.Rows.Count - 1).Value
     
     ' Loop through each unique combination of Us lead and India lead
     On Error Resume Next
-    For Each usLeadCell In usLeadColumn.Offset(1).SpecialCells(xlCellTypeConstants)
+    For i = LBound(usLeadValues) To UBound(usLeadValues)
         On Error Resume Next
-        For Each indiaLeadCell In indiaLeadColumn.Offset(1).SpecialCells(xlCellTypeConstants)
-            usLead = usLeadCell.Value
-            indiaLead = indiaLeadCell.Value
+        For j = LBound(indiaLeadValues) To UBound(indiaLeadValues)
+            usLead = Trim(usLeadValues(i, 1))
+            indiaLead = Trim(indiaLeadValues(j, 1))
             
-            ' Write the Us lead to destination sheet
-            destinationSheet.Cells(destinationRow, 1).Value = usLead
-            
-            ' Write the India lead to destination sheet
-            destinationSheet.Cells(destinationRow, 2).Value = indiaLead
-            
-            ' Write the head count to destination sheet
-            destinationSheet.Cells(destinationRow, 3).Value = Application.WorksheetFunction.CountIfs(sourceData.Columns(usLeadColumn.Column), usLead, sourceData.Columns(indiaLeadColumn.Column), indiaLead)
-            
-            ' Increment the destination row
-            destinationRow = destinationRow + 1
-        Next indiaLeadCell
+            ' Check if Us lead and India lead are not empty
+            If Len(usLead) > 0 And Len(indiaLead) > 0 Then
+                ' Write the Us lead to destination sheet
+                destinationSheet.Cells(destinationRow, 1).Value = usLead
+                
+                ' Write the India lead to destination sheet
+                destinationSheet.Cells(destinationRow, 2).Value = indiaLead
+                
+                ' Write the head count to destination sheet
+                destinationSheet.Cells(destinationRow, 3).Value = Application.WorksheetFunction.CountIfs(sourceData.Columns(usLeadColumn.Column), usLead, sourceData.Columns(indiaLeadColumn.Column), indiaLead)
+                
+                ' Increment the destination row
+                destinationRow = destinationRow + 1
+            End If
+        Next j
         On Error Resume Next
-    Next usLeadCell
+    Next i
     
     MsgBox "Data table generated successfully!", vbInformation
 End Sub
