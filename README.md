@@ -1,77 +1,43 @@
 # prac-ml
 Practise my ML fundamentals
 
-Sub GenerateDataTable()
+Sub CopyRowsToSheet5()
     Dim sourceSheet As Worksheet
     Dim destinationSheet As Worksheet
-    Dim sourceData As Range
-    Dim usLeadColumn As Range
-    Dim indiaLeadColumn As Range
-    Dim destinationRow As Long
-    Dim usLeadValues As Variant
-    Dim indiaLeadValues As Variant
-    Dim usLead As String
-    Dim indiaLead As String
-    Dim count As Long
-    Dim i As Long
+    Dim lastRow As Long
+    Dim sourceRow As Range
+    Dim destinationRow As Range
+    Dim headerRow As Range
     
-    ' Set the source sheet and range
-    Set sourceSheet = ThisWorkbook.Sheets("Sheet1")
-    Set sourceData = sourceSheet.UsedRange
+    ' Set the source sheet and destination sheet
+    Set sourceSheet = ThisWorkbook.Sheets("Sheet1") ' Modify as needed
+    Set destinationSheet = ThisWorkbook.Sheets("Sheet5") ' Modify as needed
     
-    ' Set the destination sheet
-    Set destinationSheet = ThisWorkbook.Sheets("Sheet4")
+    ' Find the header row in the source sheet
+    Set headerRow = sourceSheet.Rows(1)
     
-    ' Clear previous data in destination sheet
-    destinationSheet.Cells.Clear
+    ' Find the last row in the source sheet
+    lastRow = sourceSheet.Cells(sourceSheet.Rows.Count, "A").End(xlUp).Row
     
-    ' Find the columns with headings "HR_LEVEL_12" and "US Lead"
-    Set usLeadColumn = sourceData.Rows(1).Find("US Lead", LookIn:=xlValues, LookAt:=xlWhole)
-    Set indiaLeadColumn = sourceData.Rows(1).Find("HR_LEVEL_12", LookIn:=xlValues, LookAt:=xlWhole)
-    
-    ' Exit if either column is not found
-    If usLeadColumn Is Nothing Or indiaLeadColumn Is Nothing Then
-        MsgBox "Columns not found!", vbExclamation
-        Exit Sub
-    End If
-    
-    ' Set the initial destination row
-    destinationRow = 2
-    
-    ' Get the values from Us lead and India lead columns into arrays
-    usLeadValues = usLeadColumn.Offset(1).Resize(sourceData.Rows.Count - 1).Value
-    indiaLeadValues = indiaLeadColumn.Offset(1).Resize(sourceData.Rows.Count - 1).Value
-    
-    ' Loop through each unique Us lead
-    For i = LBound(usLeadValues) To UBound(usLeadValues)
-        usLead = Trim(usLeadValues(i, 1))
-        
-        ' Check if Us lead is not empty
-        If Len(usLead) > 0 Then
-            ' Write the Us lead to destination sheet
-            destinationSheet.Cells(destinationRow, 1).Value = usLead
+    ' Loop through each row in the source sheet
+    For Each sourceRow In sourceSheet.Range("A2:A" & lastRow)
+        ' Check if the value in the "sow" column is "swe"
+        If sourceRow.Offset(0, headerRow.Cells(1, "sow").Column - 1).Value = "swe" Then
+            ' Find the corresponding destination row in Sheet5
+            Set destinationRow = destinationSheet.Rows(destinationSheet.Rows.Count).End(xlUp).Offset(1)
             
-            ' Find all corresponding India leads and their counts
-            count = 0
-            For j = LBound(indiaLeadValues) To UBound(indiaLeadValues)
-                indiaLead = Trim(indiaLeadValues(j, 1))
-                
-                ' Check if India lead is not empty
-                If Len(indiaLead) > 0 And usLead = Trim(usLeadValues(j, 1)) Then
-                    ' Write the India lead to destination sheet
-                    destinationSheet.Cells(destinationRow + count, 2).Value = indiaLead
-                    
-                    ' Write the head count to destination sheet
-                    destinationSheet.Cells(destinationRow + count, 3).Value = Application.WorksheetFunction.CountIfs(sourceData.Columns(usLeadColumn.Column), usLead, sourceData.Columns(indiaLeadColumn.Column), indiaLead)
-                    
-                    count = count + 1
-                End If
-            Next j
-            
-            ' Increment the destination row
-            destinationRow = destinationRow + count
+            ' Copy the entire row to Sheet5
+            sourceRow.EntireRow.Copy destinationRow
         End If
-    Next i
+    Next sourceRow
     
-    MsgBox "Data table generated successfully!", vbInformation
+    ' Copy the header row to Sheet5
+    headerRow.Copy destinationSheet.Rows(1)
+    
+    ' Auto-fit the columns in Sheet5
+    destinationSheet.UsedRange.Columns.AutoFit
+    
+    ' Optionally, you can also format the copied data in Sheet5 as needed
+    
+    MsgBox "Rows with value 'swe' in the 'sow' column have been copied to Sheet5."
 End Sub
