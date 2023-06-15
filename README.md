@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const submitFiles = async () => {
   const formData = new FormData();
   for (let i = 0; i < files.length; i++) {
@@ -5,10 +7,7 @@ const submitFiles = async () => {
   }
 
   try {
-    const response = await fetch("http://localhost:8080/api/upload", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await axios.post("http://localhost:8080/api/upload", formData);
 
     // Handle the response from the backend
     // ...
