@@ -1,18 +1,33 @@
-import axios from 'axios';
+import React, { useState } from 'react';
 
-const submitFiles = async () => {
-  const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append("files", files[i]);
-  }
+const FileUploadForm = () => {
+  const [file1, setFile1] = useState(null);
+  const [file2, setFile2] = useState(null);
 
-  try {
-    const response = await axios.post("http://localhost:8080/api/upload", formData);
+  const handleFile1Change = (event) => {
+    setFile1(event.target.files[0]);
+  };
 
-    // Handle the response from the backend
-    // ...
-  } catch (error) {
-    // Handle errors
-    // ...
-  }
+  const handleFile2Change = (event) => {
+    setFile2(event.target.files[0]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('file1', file1);
+    formData.append('file2', file2);
+
+    // TODO: Send the formData to the Spring Boot backend
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="file" name="file1" onChange={handleFile1Change} />
+      <input type="file" name="file2" onChange={handleFile2Change} />
+      <button type="submit">Convert</button>
+    </form>
+  );
 };
+
+export default FileUploadForm;
