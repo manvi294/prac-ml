@@ -1,63 +1,36 @@
-@RestController
-@RequestMapping("/api")
-public class FileController {
-
-    @GetMapping("/download")
-    public ResponseEntity<Resource> downloadFile() {
-        String filePath = "/path/to/your/file"; // Replace with your actual file path
-
-        // Load file as Resource
-        Resource resource = new FileSystemResource(filePath);
-
-        // Check if file exists
-        if (!resource.exists()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Set the appropriate content type for the file
-        String contentType = "application/octet-stream"; // You can set specific content types based on file extensions if needed
-
-        // Return the file as a ResponseEntity, which will trigger a download on the frontend
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-    }
-}
-
-
-
-©©©©©©©©©©
-
-
-function handleDownload() {
-  fetch('http://localhost:8080/api/download')
-    .then(response => {
-      // Check if the response was successful
-      if (!response.ok) {
-        throw new Error('File download failed');
-      }
-
-      // Extract the filename from the Content-Disposition header
-      const contentDispositionHeader = response.headers.get('content-disposition');
-      const filenameMatch = contentDispositionHeader.match(/filename="(.+)"/);
-      const filename = filenameMatch && filenameMatch[1];
-
-      // Create a blob URL from the response body
-      return response.blob().then(blob => {
-        const url = window.URL.createObjectURL(blob);
-
-        // Create a temporary link element and trigger the download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename || 'downloaded_file';
-        link.click();
-
-        // Clean up the blob URL
-        URL.revokeObjectURL(url);
-      });
-    })
-    .catch(error => {
-      console.error('Error downloading file:', error);
-    });
-}
+Sub ExportToPowerPoint()
+    Dim PowerPointApp As Object
+    Dim PowerPointPres As Object
+    Dim PowerPointSlide As Object
+    Dim ExcelRange As Range
+    Dim FilePath As String
+    
+    ' Set the file path of the PowerPoint presentation
+    FilePath = "C:\Path\to\PowerPoint.pptx"
+    
+    ' Set the range of data to be copied from Excel
+    Set ExcelRange = ThisWorkbook.Sheets("Sheet1").Range("A1:D10")
+    
+    ' Create a new instance of PowerPoint
+    Set PowerPointApp = CreateObject("PowerPoint.Application")
+    
+    ' Open the PowerPoint presentation
+    Set PowerPointPres = PowerPointApp.Presentations.Open(FilePath)
+    
+    ' Add a new slide to the presentation
+    Set PowerPointSlide = PowerPointPres.Slides.Add(1, 11) ' 11 represents the slide layout
+    
+    ' Copy the Excel range and paste it into the PowerPoint slide
+    ExcelRange.Copy
+    PowerPointSlide.Shapes.PasteSpecial(DataType:=2) ' 2 represents a picture format
+    
+    ' Save and close the PowerPoint presentation
+    PowerPointPres.Save
+    PowerPointPres.Close
+    
+    ' Clean up the PowerPoint objects
+    Set PowerPointSlide = Nothing
+    Set PowerPointPres = Nothing
+    PowerPointApp.Quit
+    Set PowerPointApp = Nothing
+End Sub
