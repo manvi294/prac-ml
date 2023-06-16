@@ -1,20 +1,35 @@
-Sub FillColumnAF()
-    Dim ws As Worksheet
-    Dim lastRow As Long
-    Dim i As Long
+Sub PopulateColumnBP()
+    Dim wsMapping As Worksheet
+    Dim wsSheet1 As Worksheet
+    Dim mappingRange As Range
+    Dim cell As Range
+    Dim searchValue As String
+    Dim resultValue As String
     
-    ' Set the worksheet to work with
-    Set ws = ThisWorkbook.Sheets("Sheet1") ' Replace "Sheet1" with your sheet name
+    ' Set the mapping sheet and Sheet1
+    Set wsMapping = ThisWorkbook.Sheets("Mapping") ' Replace "Mapping" with your mapping sheet name
+    Set wsSheet1 = ThisWorkbook.Sheets("Sheet1") ' Replace "Sheet1" with your Sheet1 name
     
-    ' Find the last row in column AE
-    lastRow = ws.Cells(ws.Rows.Count, "AE").End(xlUp).Row
+    ' Set the mapping range
+    Set mappingRange = wsMapping.Range("A1:B" & wsMapping.Cells(wsMapping.Rows.Count, "A").End(xlUp).Row)
     
-    ' Loop through the cells in column AE
-    For i = 1 To lastRow
-        ' Check if the cell in column AE is blank
-        If ws.Cells(i, "AE").Value = "" Then
-            ' Fill in a value in column AF
-            ws.Cells(i, "AF").Value = "YourValue" ' Replace "YourValue" with the desired value
+    ' Loop through the cells in column AE of Sheet1
+    For Each cell In wsSheet1.Range("AE1:AE" & wsSheet1.Cells(wsSheet1.Rows.Count, "AE").End(xlUp).Row)
+        ' Get the search value from column AE
+        searchValue = cell.Value
+        
+        ' Reset the result value
+        resultValue = ""
+        
+        ' Search for the value in the mapping range
+        On Error Resume Next
+        resultValue = Application.WorksheetFunction.VLookup(searchValue, mappingRange, 2, False)
+        On Error GoTo 0
+        
+        ' Check if a match was found
+        If resultValue <> "" Then
+            ' Fill in the result value in column BP
+            cell.Offset(0, 53).Value = resultValue
         End If
-    Next i
+    Next cell
 End Sub
