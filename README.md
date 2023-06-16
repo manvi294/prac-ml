@@ -1,78 +1,63 @@
-import React, { useState } from 'react';
-
-const FileUploadForm = () => {
-  const [file1, setFile1] = useState(null);
-  const [file2, setFile2] = useState(null);
-
-  const handleFile1Change = (event) => {
-    setFile1(event.target.files[0]);
-  };
-
-  const handleFile2Change = (event) => {
-    setFile2(event.target.files[0]);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('file1', file1);
-    formData.append('file2', file2);
-
-    // TODO: Send the formData to the Spring Boot backend
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="file" name="file1" onChange={handleFile1Change} />
-      <input type="file" name="file2" onChange={handleFile2Change} />
-      <button type="submit">Convert</button>
-    </form>
-  );
-};
-
-export default FileUploadForm;
-
-
-
-
-
-
-
-=============
-
-
-
-
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 @RestController
-public class FileUploadController {
+@RequestMapping("/api")
+public class FileController {
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFiles(
-            @RequestParam("file1") MultipartFile file1,
-            @RequestParam("file2") MultipartFile file2) {
-        try {
-            // Specify the directory where you want to store the files
-            String uploadDirectory = "/path/to/your/directory/";
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile() {
+        String filePath = "/path/to/your/file"; // Replace with your actual file path
 
-            // Save the files to the specified directory
-            file1.transferTo(new File(uploadDirectory + file1.getOriginalFilename()));
-            file2.transferTo(new File(uploadDirectory + file2.getOriginalFilename()));
+        // Load file as Resource
+        Resource resource = new FileSystemResource(filePath);
 
-            // Run your desired API using the file paths
-            // TODO: Implement your logic here
-            
-            return ResponseEntity.ok("Files uploaded successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading files.");
+        // Check if file exists
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
         }
+
+        // Set the appropriate content type for the file
+        String contentType = "application/octet-stream"; // You can set specific content types based on file extensions if needed
+
+        // Return the file as a ResponseEntity, which will trigger a download on the frontend
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }
 
+
+
+©©©©©©©©©©
+
+
+function handleDownload() {
+  fetch('http://localhost:8080/api/download')
+    .then(response => {
+      // Check if the response was successful
+      if (!response.ok) {
+        throw new Error('File download failed');
+      }
+
+      // Extract the filename from the Content-Disposition header
+      const contentDispositionHeader = response.headers.get('content-disposition');
+      const filenameMatch = contentDispositionHeader.match(/filename="(.+)"/);
+      const filename = filenameMatch && filenameMatch[1];
+
+      // Create a blob URL from the response body
+      return response.blob().then(blob => {
+        const url = window.URL.createObjectURL(blob);
+
+        // Create a temporary link element and trigger the download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'downloaded_file';
+        link.click();
+
+        // Clean up the blob URL
+        URL.revokeObjectURL(url);
+      });
+    })
+    .catch(error => {
+      console.error('Error downloading file:', error);
+    });
+}
