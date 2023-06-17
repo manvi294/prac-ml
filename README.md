@@ -14,7 +14,7 @@ Sub CalculateHalfTotal()
     total = 0
     For i = 1 To lastRow
         If IsNumeric(ws.Cells(i, "F").Value) Then
-            total = total + ws.Cells(i, "F").Value
+            total = total + CDbl(ws.Cells(i, "F").Value)
         Else
             Debug.Print "Non-numeric value or empty cell detected in row " & i & ": " & ws.Cells(i, "F").Value
         End If
