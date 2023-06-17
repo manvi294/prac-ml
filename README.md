@@ -15,6 +15,8 @@ Sub CalculateHalfTotal()
     For i = 1 To lastRow
         If IsNumeric(ws.Cells(i, "F").Value) Then
             total = total + ws.Cells(i, "F").Value
+        Else
+            Debug.Print "Non-numeric value or empty cell detected in row " & i & ": " & ws.Cells(i, "F").Value
         End If
     Next i
     
@@ -23,4 +25,8 @@ Sub CalculateHalfTotal()
     
     ' Print the half total on the last line of column F
     ws.Cells(lastRow + 1, "F").Value = halfTotal
+    
+    ' Output the calculated values to the Immediate window (View > Immediate Window)
+    Debug.Print "Total: " & total
+    Debug.Print "Half Total: " & halfTotal
 End Sub
