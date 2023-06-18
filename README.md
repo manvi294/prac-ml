@@ -1,59 +1,19 @@
-Sub CalculateHalfTotal()
-    Dim total As Double
-    Dim halfTotal As Double
-    Dim lastRow As Long
+Sub CopyAndInsertColumns()
+    Dim wsSource As Worksheet
+    Set wsSource = ThisWorkbook.Sheets("Sheet4")
     
-    ' Set the worksheet reference
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Sheet2")
+    Dim wsDestination As Worksheet
+    Set wsDestination = ThisWorkbook.Sheets("Sheet6")
     
-    ' Find the last row in column F
-    lastRow = ws.Cells(ws.Rows.Count, "F").End(xlUp).Row
+    ' Copy the first table from Sheet4 to Sheet6
+    wsSource.Range("C1:G" & wsSource.Cells(wsSource.Rows.Count, "C").End(xlUp).Row).Copy wsDestination.Range("A1")
     
-    ' Convert the values in column F to numeric
-    For i = 1 To lastRow
-        If Not IsEmpty(ws.Cells(i, "F").Value) Then
-            Dim cellValue As String
-            cellValue = CStr(ws.Cells(i, "F").Value)
-            
-            ' Remove any non-numeric characters except decimal separator
-            Dim cleanValue As String
-            cleanValue = ""
-            
-            For j = 1 To Len(cellValue)
-                Dim char As String
-                char = Mid(cellValue, j, 1)
-                
-                If IsNumeric(char) Or char = "." Then
-                    cleanValue = cleanValue & char
-                End If
-            Next j
-            
-            ' Convert the cleaned value to numeric
-            On Error Resume Next
-            Dim numericValue As Double
-            numericValue = CDbl(cleanValue)
-            
-            If Err.Number = 0 Then
-                ws.Cells(i, "F").Value = numericValue
-            Else
-                Debug.Print "Non-numeric value detected in row " & i & ": " & cellValue
-                Err.Clear
-            End If
-            On Error GoTo 0
-        End If
-    Next i
+    ' Insert four new columns in the first table
+    wsDestination.Range("D1").Resize(wsDestination.UsedRange.Rows.Count, 4).Insert Shift:=xlToRight
     
-    ' Calculate the total of column F
-    total = WorksheetFunction.Sum(ws.Range("F1:F" & lastRow))
+    ' Copy the second table from Sheet4 to Sheet6
+    wsSource.Range("J1:N" & wsSource.Cells(wsSource.Rows.Count, "J").End(xlUp).Row).Copy wsDestination.Cells(wsDestination.Cells(wsDestination.Rows.Count, "A").End(xlUp).Row + 2, "A")
     
-    ' Calculate half of the total
-    halfTotal = total / 2
-    
-    ' Print the half total on the last line of column F
-    ws.Cells(lastRow + 1, "F").Value = halfTotal
-    
-    ' Output the calculated values to the Immediate window (View > Immediate Window)
-    Debug.Print "Total: " & total
-    Debug.Print "Half Total: " & halfTotal
+    ' Insert four new columns in the second table
+    wsDestination.Range("D1").Resize(wsDestination.UsedRange.Rows.Count, 4).Insert Shift:=xlToRight
 End Sub
