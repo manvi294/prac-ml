@@ -10,15 +10,37 @@ Sub CalculateHalfTotal()
     ' Find the last row in column F
     lastRow = ws.Cells(ws.Rows.Count, "F").End(xlUp).Row
     
-    ' Calculate the total of column F, excluding non-numeric values or empty cells
-    total = 0
+    ' Convert the values in column F to numeric
     For i = 1 To lastRow
-        If IsNumeric(ws.Cells(i, "F").Value) Then
-            total = total + CDbl(ws.Cells(i, "F").Value)
-        Else
-            Debug.Print "Non-numeric value or empty cell detected in row " & i & ": " & ws.Cells(i, "F").Value
+        If Not IsEmpty(ws.Cells(i, "F").Value) Then
+            Dim cellValue As String
+            cellValue = CStr(ws.Cells(i, "F").Value)
+            
+            ' Remove any non-numeric characters except decimal separator
+            Dim cleanValue As String
+            cleanValue = ""
+            
+            For j = 1 To Len(cellValue)
+                Dim char As String
+                char = Mid(cellValue, j, 1)
+                
+                If IsNumeric(char) Or char = "." Then
+                    cleanValue = cleanValue & char
+                End If
+            Next j
+            
+            ' Convert the cleaned value to numeric using TryParse
+            Dim numericValue As Double
+            If Double.TryParse(cleanValue, numericValue) Then
+                ws.Cells(i, "F").Value = numericValue
+            Else
+                Debug.Print "Non-numeric value detected in row " & i & ": " & cellValue
+            End If
         End If
     Next i
+    
+    ' Calculate the total of column F
+    total = WorksheetFunction.Sum(ws.Range("F1:F" & lastRow))
     
     ' Calculate half of the total
     halfTotal = total / 2
