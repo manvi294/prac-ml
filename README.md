@@ -29,13 +29,18 @@ Sub CalculateHalfTotal()
                 End If
             Next j
             
-            ' Convert the cleaned value to numeric using TryParse
+            ' Convert the cleaned value to numeric
+            On Error Resume Next
             Dim numericValue As Double
-            If Double.TryParse(cleanValue, numericValue) Then
+            numericValue = CDbl(cleanValue)
+            
+            If Err.Number = 0 Then
                 ws.Cells(i, "F").Value = numericValue
             Else
                 Debug.Print "Non-numeric value detected in row " & i & ": " & cellValue
+                Err.Clear
             End If
+            On Error GoTo 0
         End If
     Next i
     
