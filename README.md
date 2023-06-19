@@ -3,7 +3,7 @@ Sub PerformFunctionBasedOnHeaderSelection()
     Dim headerCell As Range
     Dim selectedHeader As Variant
     Dim headerArray() As Variant
-    Dim userInputForm As Object
+    Dim userInputForm As UserFormName
     
     ' Set the header row range (modify as per your worksheet and range)
     Set headerRow = Sheet1.Rows(1)
@@ -11,35 +11,28 @@ Sub PerformFunctionBasedOnHeaderSelection()
     ' Store the header values in an array
     headerArray = headerRow.Value
     
-    ' Create a user form and add a combo box to display the header options
-    Set userInputForm = VBA.UserForms.Add(TypeName:="UserFormName")
+    ' Show the hidden user form
+    Set userInputForm = New UserFormName
+    userInputForm.Show vbModeless
     
     With userInputForm
+        ' Set the properties of the user form
         .Caption = "Select Header"
         .Width = 300
         .Height = 100
         
-        With .Controls.Add("Forms.ComboBox.1")
-            .Left = 10
-            .Top = 10
-            .Width = 280
+        ' Set the properties of the combo box control on the user form
+        With .ComboBox1
             .List = Application.Transpose(headerArray)
             .DropDownStyle = fmDropDownList
             .Font.Size = 12
         End With
         
-        With .Controls.Add("Forms.CommandButton.1")
-            .Left = 110
-            .Top = 40
-            .Width = 80
-            .Caption = "OK"
-            .Font.Size = 12
-        End With
-        
         ' Show the user form
         .Show
+        
         ' Store the selected header value
-        selectedHeader = .Controls(0).Value
+        selectedHeader = .ComboBox1.Value
     End With
     
     ' Clean up the user form
