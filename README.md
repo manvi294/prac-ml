@@ -1,9 +1,11 @@
-Sub PerformFunctionBasedOnHeaderSelection()
+Option Explicit
+
+Private selectedHeader As Variant
+Private formClosed As Boolean
+
+Private Sub UserForm_Initialize()
     Dim headerRow As Range
-    Dim headerCell As Range
-    Dim selectedHeader As Variant
     Dim headerArray() As Variant
-    Dim userInputForm As UserFormName
     
     ' Set the header row range (modify as per your worksheet and range)
     Set headerRow = Sheet1.Rows(1)
@@ -11,55 +13,45 @@ Sub PerformFunctionBasedOnHeaderSelection()
     ' Store the header values in an array
     headerArray = headerRow.Value
     
-    ' Check if the user form is already displayed
-    On Error Resume Next
-    Set userInputForm = New UserFormName
-    If Err.Number = 0 Then
-        userInputForm.Hide
-    Else
-        Set userInputForm = Nothing
-    End If
-    On Error GoTo 0
-    
-    ' Show the hidden user form
-    If userInputForm Is Nothing Then
-        Set userInputForm = New UserFormName
-    End If
-    
-    With userInputForm
-        ' Set the properties of the user form
-        .Caption = "Select Header"
-        .Width = 300
-        .Height = 100
-        
-        ' Set the properties of the combo box control on the user form
-        With .ComboBox1
-            .List = Application.Transpose(headerArray)
-            .Style = fmStyleDropDownList
-            .Font.Size = 12
-        End With
-        
-        ' Show the user form
-        .Show
-        
-        ' Store the selected header value
-        selectedHeader = .ComboBox1.Value
+    ' Set the properties of the combo box control on the user form
+    With ComboBox1
+        .List = Application.Transpose(headerArray)
+        .Style = fmStyleDropDownList
+        .Font.Size = 12
     End With
+End Sub
+
+Private Sub ComboBox1_Change()
+    ' Store the selected header value
+    selectedHeader = ComboBox1.Value
     
-    ' Clean up the user form
-    Unload userInputForm
+    ' Set the formClosed flag to True
+    formClosed = True
+    
+    ' Hide the user form
+    Me.Hide
     
     ' Check if a header was selected
     If Not IsEmpty(selectedHeader) Then
-        ' Loop through the header row to find the selected header
-        For Each headerCell In headerRow
-            If headerCell.Value = selectedHeader Then
-                ' Perform functions based on the selected header
-                ' Add your code here
-                
-                ' Exit the loop once the header is found
-                Exit For
-            End If
-        Next headerCell
+        ' Perform functions based on the selected header
+        ' Add your code here
+        
+        ' Example: Count the number of non-empty cells in the selected column
+        Dim selectedColumn As Range
+        Dim rowCount As Long
+        Set selectedColumn = Sheet1.Rows(1).Find(selectedHeader).EntireColumn
+        rowCount = Application.WorksheetFunction.CountA(selectedColumn)
+        
+        ' Print the count in Sheet2
+        Sheet2.Range("A1").Value = "Count: " & rowCount
+    End If
+End Sub
+
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    ' Check if the form is closed without selecting a header
+    If Not formClosed Then
+        ' Prompt the user to make a selection
+        MsgBox "Please select a header before closing the form.", vbExclamation, "Selection Required"
+        Cancel = True ' Prevent the form from closing
     End If
 End Sub
