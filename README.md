@@ -12,7 +12,7 @@ Sub PerformFunctionBasedOnHeaderSelection()
     headerArray = headerRow.Value
     
     ' Create a user form and add a combo box to display the header options
-    Set userInputForm = VBA.UserForms.Add
+    Set userInputForm = VBA.UserForms.Add(TypeName:="UserFormName")
     
     With userInputForm
         .Caption = "Select Header"
