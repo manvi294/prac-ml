@@ -11,9 +11,20 @@ Sub PerformFunctionBasedOnHeaderSelection()
     ' Store the header values in an array
     headerArray = headerRow.Value
     
-    ' Show the hidden user form
+    ' Check if the user form is already displayed
+    On Error Resume Next
     Set userInputForm = New UserFormName
-    userInputForm.Show vbModeless
+    If Err.Number = 0 Then
+        userInputForm.Hide
+    Else
+        Set userInputForm = Nothing
+    End If
+    On Error GoTo 0
+    
+    ' Show the hidden user form
+    If userInputForm Is Nothing Then
+        Set userInputForm = New UserFormName
+    End If
     
     With userInputForm
         ' Set the properties of the user form
@@ -24,7 +35,7 @@ Sub PerformFunctionBasedOnHeaderSelection()
         ' Set the properties of the combo box control on the user form
         With .ComboBox1
             .List = Application.Transpose(headerArray)
-            .DropDownStyle = fmDropDownList
+            .Style = fmStyleDropDownList
             .Font.Size = 12
         End With
         
