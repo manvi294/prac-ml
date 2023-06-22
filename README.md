@@ -4,7 +4,6 @@ Sub ResizeAndRepositionTable()
     Dim ppSlide As PowerPoint.Slide
     Dim ppShape As PowerPoint.Shape
     Dim ppTable As PowerPoint.Table
-    Dim ppCell As PowerPoint.Cell
     Dim rowIndex As Long
     Dim colIndex As Long
     
@@ -33,15 +32,14 @@ Sub ResizeAndRepositionTable()
         ' Reference the table
         Set ppTable = ppShape.Table
         
-        ' Loop through each cell in the table
-        For Each ppCell In ppTable.Cells
-            ' Get the row and column indexes of the current cell
-            rowIndex = ppCell.Row
-            colIndex = ppCell.Column
-            
-            ' Increase the font size of the cell text
-            ppTable.Cell(rowIndex, colIndex).Shape.TextFrame.TextRange.Font.Size = 20 ' Set the desired font size
-        Next ppCell
+        ' Loop through each row in the table
+        For rowIndex = 1 To ppTable.Rows.Count
+            ' Loop through each column in the row
+            For colIndex = 1 To ppTable.Columns.Count
+                ' Increase the font size of the cell text
+                ppTable.Cell(rowIndex, colIndex).Shape.TextFrame.TextRange.Font.Size = 20 ' Set the desired font size
+            Next colIndex
+        Next rowIndex
     End If
     
     ' Save and close the PowerPoint presentation
@@ -52,7 +50,6 @@ Sub ResizeAndRepositionTable()
     ppApp.Quit
     
     ' Clean up
-    Set ppCell = Nothing
     Set ppTable = Nothing
     Set ppShape = Nothing
     Set ppSlide = Nothing
