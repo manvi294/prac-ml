@@ -5,11 +5,11 @@ Sub RemoveTableFormatting()
     ' Set the worksheet
     Set ws = ThisWorkbook.Sheets("Sheet4") ' Replace "Sheet4" with your desired sheet name
     
-    ' Set the table
-    Set tbl = ws.ListObjects("Table1") ' Replace "Table1" with the actual table name
-    
-    ' Check if the table exists
-    If Not tbl Is Nothing Then
+    ' Check if there is at least one table in the worksheet
+    If ws.ListObjects.Count > 0 Then
+        ' Get the first table in the worksheet
+        Set tbl = ws.ListObjects(1)
+        
         ' Unlist the table to remove table formatting
         tbl.Unlist
         
