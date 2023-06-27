@@ -1,35 +1,36 @@
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api")
-public class FileController {
-
-    @GetMapping("/download-files")
-    public ResponseEntity<MultiValueMap<String, Resource>> downloadFiles() {
-        String jsonFilePath = "path/to/your/json/file.json"; // Replace with the actual JSON file path
-        Resource jsonResource = new FileSystemResource(jsonFilePath);
-
-        String textFilePath = "path/to/your/text/file.txt"; // Replace with the actual text file path
-        Resource textResource = new FileSystemResource(textFilePath);
-
-        MultiValueMap<String, Resource> resources = new LinkedMultiValueMap<>();
-        resources.put("jsonFile", Arrays.asList(jsonResource));
-        resources.put("textFile", Arrays.asList(textResource));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        return new ResponseEntity<>(resources, headers, HttpStatus.OK);
-    }
-}
+Sub FormatDataAsTable()
+    Dim ws As Worksheet
+    Dim rng As Range
+    Dim tbl As ListObject
+    
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet4") ' Replace "Sheet4" with your desired sheet name
+    
+    ' Get the used range in the worksheet
+    Set rng = ws.UsedRange
+    
+    ' Add a table to the range
+    Set tbl = ws.ListObjects.Add(xlSrcRange, rng, , xlYes)
+    
+    ' Apply default Excel table formatting
+    With tbl
+        ' Table Style
+        .TableStyle = "TableStyleMedium2" ' Replace with the desired table style name
+        
+        ' Header Row
+        .HeaderRowRange.Interior.Color = RGB(79, 129, 189) ' Replace with the desired header row color
+        .HeaderRowRange.Font.Color = RGB(255, 255, 255) ' Replace with the desired header font color
+        .HeaderRowRange.Font.Bold = True
+        
+        ' Data Body Range
+        .DataBodyRange.Interior.Color = RGB(255, 255, 255) ' Replace with the desired data body color
+        
+        ' Alternating Row Color
+        .TableStyle = "TableStyleMedium2" ' Replace with the desired table style name
+        .ShowTableStyleColumnStripes = True
+        .ShowTableStyleRowStripes = False
+    End With
+    
+    ' Autofit columns in the table
+    rng.Columns.AutoFit
+End Sub
