@@ -3,182 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Resolve Query - Admin Form</title>
+    <link rel="stylesheet" href="/static/css/admin_dashboard.css">
     <style>
-        /* Global Styles */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f7f7;
-            color: #000;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
         }
-
-        .container {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            max-width: 900px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 26px;
-            border-bottom: 3px solid #ffcc00;
-            padding-bottom: 10px;
-        }
-
         h2 {
-            color: #444;
-            margin: 20px 0 10px 0;
-            font-size: 20px;
-            border-left: 5px solid #ffcc00;
-            padding-left: 10px;
+            color: red;
+            margin-bottom: 20px;
         }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background-color: #fff;
-            border-radius: 6px;
-            overflow: hidden;
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: gray;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        th, td {
+        .query-text {
+            background-color: lightyellow;
             padding: 15px;
-            text-align: left;
+            border: 2px solid red;
+            border-radius: 8px;
+            margin-bottom: 30px;
         }
-
-        th {
-            background-color: #ffcc00;
-            color: #000;
+        .form-section {
+            margin-bottom: 30px;
+            background-color: lightyellow;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        label {
             font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid gray;
+        }
+        .multi-checklist {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .multi-checklist li {
+            margin-bottom: 10px;
+        }
+        .submit-btn {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             font-size: 16px;
         }
-
-        td {
-            background-color: #f7f7f7;
-            border-bottom: 1px solid #e0e0e0;
-            color: #333;
-        }
-
-        tr:hover td {
-            background-color: #ffefb3;
-        }
-
-        button {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #c0392b;
-        }
-
-        /* Input Section */
-        .input-container {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: #ffcc00;
-            outline: none;
-        }
-
-        .add-btn {
-            background-color: #ffcc00;
-            color: #000;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-left: 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .add-btn:hover {
-            background-color: #e6b800;
+        .submit-btn:hover {
+            background-color: darkred;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>Admin & Developer Dashboard</h1>
-        
-        <h2>User Queries</h2>
-        <table id="queriesTable">
-            <thead>
-                <tr>
-                    <th>User Query</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Queries will be dynamically added here -->
-            </tbody>
-        </table>
+        <h2>Resolve Query</h2>
 
-        <div class="input-container">
-            <input type="text" id="newScenario" placeholder="Enter scenario code" />
-            <button class="add-btn" onclick="addScenario()">Add Scenario</button>
+        <!-- Display Query Text -->
+        <div class="query-text">
+            <strong>Query:</strong> The user query for which the resolve button was pressed.
         </div>
+
+        <!-- Form 1: Intent -->
+        <div class="form-section">
+            <h3>Intent</h3>
+            <form>
+                <label for="intent_name">Intent Name:</label>
+                <input type="text" id="intent_name" name="intent_name" required>
+
+                <label for="query">Query:</label>
+                <input type="text" id="query" name="query">
+
+                <label for="server_name">Server Name (if any):</label>
+                <input type="text" id="server_name" name="server_name">
+
+                <label for="index_name">Index Name:</label>
+                <input type="text" id="index_name" name="index_name">
+
+                <label for="db_query">DB Query:</label>
+                <input type="text" id="db_query" name="db_query">
+
+                <label for="channel">Channel:</label>
+                <input type="text" id="channel" name="channel">
+
+                <label for="response_template">Response Template:</label>
+                <input type="text" id="response_template" name="response_template">
+
+                <label for="dashboard_link">Dashboard Link:</label>
+                <input type="text" id="dashboard_link" name="dashboard_link">
+
+                <label for="follow_ups">Follow Ups:</label>
+                <input type="text" id="follow_ups" name="follow_ups">
+                
+                <!-- Multi-select checklist for additional query parameters -->
+                <label for="additional_query_parameters">Additional Query Parameters:</label>
+                <ul class="multi-checklist">
+                    <li><input type="checkbox" id="id" name="additional_query_parameters" value="ID"> <label for="id">ID</label></li>
+                    <li><input type="checkbox" id="cities" name="additional_query_parameters" value="Cities"> <label for="cities">Cities</label></li>
+                    <li><input type="checkbox" id="state" name="additional_query_parameters" value="State"> <label for="state">State</label></li>
+                    <li><input type="checkbox" id="time" name="additional_query_parameters" value="Time"> <label for="time">Time</label></li>
+                    <li><input type="checkbox" id="term" name="additional_query_parameters" value="Term"> <label for="term">Term</label></li>
+                    <li><input type="checkbox" id="number" name="additional_query_parameters" value="Number"> <label for="number">Number</label></li>
+                    <li><input type="checkbox" id="rank" name="additional_query_parameters" value="Rank"> <label for="rank">Rank</label></li>
+                </ul>
+            </form>
+        </div>
+
+        <!-- Form 2: Add Keyword -->
+        <div class="form-section">
+            <h3>Add Keyword</h3>
+            <form>
+                <label for="keyword_channel">Channel:</label>
+                <input type="text" id="keyword_channel" name="keyword_channel">
+
+                <label for="keyword_context">Context:</label>
+                <input type="text" id="keyword_context" name="keyword_context">
+
+                <label for="metric">Metric:</label>
+                <input type="text" id="metric" name="metric">
+
+                <label for="param">Parameter:</label>
+                <input type="text" id="param" name="param">
+
+                <label for="addon">Add On:</label>
+                <input type="text" id="addon" name="addon">
+            </form>
+        </div>
+
+        <!-- Form 3: Scenario Identification -->
+        <div class="form-section">
+            <h3>Scenario Identification</h3>
+            <form>
+                <label for="sc_channel">Channel:</label>
+                <input type="text" id="sc_channel" name="sc_channel">
+
+                <label for="rank">Rank:</label>
+                <input type="number" id="rank" name="rank">
+
+                <label for="sc_number">Number:</label>
+                <input type="number" id="sc_number" name="sc_number">
+
+                <label for="sc_addon">Add On:</label>
+                <input type="text" id="sc_addon" name="sc_addon">
+            </form>
+        </div>
+
+        <!-- Form 4: New Database Server -->
+        <div class="form-section">
+            <h3>If a New Database Server is Required</h3>
+            <form>
+                <label for="db_name">DB Name:</label>
+                <input type="text" id="db_name" name="db_name">
+
+                <label for="host">Host:</label>
+                <input type="text" id="host" name="host">
+
+                <label for="port">Port:</label>
+                <input type="number" id="port" name="port">
+
+                <label for="service">Service:</label>
+                <input type="text" id="service" name="service">
+
+                <label for="uid">UID:</label>
+                <input type="text" id="uid" name="uid">
+
+                <label for="encrypted_token">Encrypted Token:</label>
+                <input type="text" id="encrypted_token" name="encrypted_token">
+            </form>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="submit-btn" type="submit">Submit</button>
     </div>
-
-    <script>
-        // Sample queries from users (these will come from your FastAPI backend)
-        const queries = ["How to reset password?", "What is the refund policy?", "Update chatbot responses"];
-
-        // Populate table with queries
-        const tableBody = document.querySelector('#queriesTable tbody');
-        queries.forEach(query => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${query}</td><td><button onclick="handleAction('${query}')">Resolve</button></td>`;
-            tableBody.appendChild(row);
-        });
-
-        function handleAction(query) {
-            alert('Action taken for: ' + query);
-            // Here you can call a FastAPI endpoint to mark this query as resolved
-        }
-
-        function addScenario() {
-            const scenario = document.getElementById('newScenario').value;
-            if (scenario) {
-                alert('Scenario added: ' + scenario);
-                // You can send the scenario to the FastAPI backend to be stored or processed
-                document.getElementById('newScenario').value = ''; // Clear input after adding
-            } else {
-                alert('Please enter a scenario.');
-            }
-        }
-    </script>
-
 </body>
 </html>
