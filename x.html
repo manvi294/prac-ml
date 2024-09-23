@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            color: #000;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 26px;
+            border-bottom: 3px solid #ffcc00;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #444;
+            margin: 20px 0 10px 0;
+            font-size: 20px;
+            border-left: 5px solid #ffcc00;
+            padding-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        td {
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        tr:hover td {
+            background-color: #ffefb3;
+        }
+
+        button {
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Input Section */
+        .input-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+
+        .add-btn {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-btn:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Admin & Developer Dashboard</h1>
+        
+        <h2>User Queries</h2>
+        <table id="queriesTable">
+            <thead>
+                <tr>
+                    <th>User Query</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Queries will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <div class="input-container">
+            <input type="text" id="newScenario" placeholder="Enter scenario code" />
+            <button class="add-btn" onclick="addScenario()">Add Scenario</button>
+        </div>
+    </div>
+
+    <script>
+        // Sample queries from users (these will come from your FastAPI backend)
+        const queries = ["How to reset password?", "What is the refund policy?", "Update chatbot responses"];
+
+        // Populate table with queries
+        const tableBody = document.querySelector('#queriesTable tbody');
+        queries.forEach(query => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${query}</td><td><button onclick="handleAction('${query}')">Resolve</button></td>`;
+            tableBody.appendChild(row);
+        });
+
+        function handleAction(query) {
+            alert('Action taken for: ' + query);
+            // Here you can call a FastAPI endpoint to mark this query as resolved
+        }
+
+        function addScenario() {
+            const scenario = document.getElementById('newScenario').value;
+            if (scenario) {
+                alert('Scenario added: ' + scenario);
+                // You can send the scenario to the FastAPI backend to be stored or processed
+                document.getElementById('newScenario').value = ''; // Clear input after adding
+            } else {
+                alert('Please enter a scenario.');
+            }
+        }
+    </script>
+
+</body>
+</html>
